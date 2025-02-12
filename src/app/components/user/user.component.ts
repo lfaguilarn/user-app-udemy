@@ -1,18 +1,29 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Usuario } from '../../models/usuario';
 import Swal from 'sweetalert2';
+import { Router, RouterModule } from '@angular/router';
+import { UserService } from '../../services/user.service';
+import { SharingDataService } from '../../services/sharing-data.service';
 
 @Component({
   selector: 'user',
   standalone: true,
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './user.component.html'
 })
 export class UserComponent {
-  @Input() usuarios: Usuario[] = [];
-  @Output() idEvent: EventEmitter<number> = new EventEmitter();
-  @Output() userEventEmitter: EventEmitter<Usuario> = new EventEmitter();
-  
+  usuarios: Usuario[] = [];
+  title:string='Listado de usuarios';
+  constructor(private service: UserService,
+    private router:Router,
+    private sharingData: SharingDataService
+  ){
+    if(this.router.getCurrentNavigation()?.extras.state){
+      this.usuarios=this.router.getCurrentNavigation()?.extras.state!['usuarios'];
+    }else{
+      this.service.finAll().subscribe(usuarios=>this.usuarios = usuarios);
+    }
+  }
   eliminar(id: number){
     Swal.fire({
       title: "¿Estas seguro de eliminar?",
@@ -25,7 +36,7 @@ export class UserComponent {
       cancelButtonText: "No, no lo elimines",
     }).then((result) => {
       if (result.isConfirmed) {
-        this.idEvent.emit(id);
+        this.sharingData.idEvent.emit(id);
         Swal.fire({
           title: "Eliminado",
           text: "Usario eliminado con exito",
@@ -39,6 +50,7 @@ export class UserComponent {
     // }
   }
   modificar(u: Usuario){
-    this.userEventEmitter.emit(u);
+    // this.sharingData.userEventEmitter.emit(u);
+    this.router.navigate(['/user/edit', u.id],{state:{u}});
   }
 }
