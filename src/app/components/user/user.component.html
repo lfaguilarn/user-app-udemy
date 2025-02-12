@@ -26,7 +26,7 @@
                     <td> {{item.nickname}} </td>
                     <td> {{item.password}} </td>
                     <td><button class="btn btn-sm btn-danger" (click)="eliminar(item.id)">Delete</button></td>
-                    <td><button class="btn btn-sm btn-info" (click)="modificar(item)">Update</button></td>
+                    <td><button class="btn btn-sm btn-info" [routerLink]="['/user/edit', item.id]">Update</button></td>
                     
                 </tr>
             }

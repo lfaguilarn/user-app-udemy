@@ -27,6 +27,7 @@ export class UserAppComponent implements OnInit {
     this.service.finAll().subscribe(usuarios => this.usuarios = usuarios);
     this.addUsuario();
     this.eliminar();
+    this.buscarUsuarioPorId();
   }
   addUsuario(){
     this.sharingData.usuarioEmit.subscribe(usuario=>{
@@ -57,5 +58,10 @@ export class UserAppComponent implements OnInit {
       });
     })
   }
-  
+  buscarUsuarioPorId(){
+    this.sharingData.buscarUsuarioPorId.subscribe(id =>{
+      const usuario = this.usuarios.find(usuario => usuario.id == id);
+      this.sharingData.usuarioSeleccionadoEditar.emit(usuario);
+    })
+  }
 }
