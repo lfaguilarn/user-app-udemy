@@ -32,29 +32,58 @@ export class UserAppComponent implements OnInit {
   addUsuario(){
     this.sharingData.usuarioEmit.subscribe(usuario=>{
       if(usuario.id > 0){
-        this.usuarios = this.usuarios.map(u => (u.id == usuario.id)? {... usuario}: u);
-        Swal.fire({
-          title: "Notificación",
-          text: "Usuario modificado con éxito",
-          icon: "success"
-        });
+        this.service.update(usuario).subscribe(
+          {
+            next: (userUpdated) =>{
+              this.usuarios = this.usuarios.map(u => (u.id == userUpdated.id)? {... userUpdated}: u);
+              this.router.navigate(['/user'], {state: {usuarios: this.usuarios}}  );
+              Swal.fire({
+                title: "Notificación",
+                text: "Usuario modificado con éxito",
+                icon: "success"
+              });
+            },
+            error: (err)=>{
+              // console.log(err.error);
+              if(err.status==400){
+                this.sharingData.errorsUserFormEmitter.emit(err.error);
+              }
+            }
+          }
+        );
+          
+          // this.router.navigate(['/user']  );
       }else{
-        usuario.id = this.usuarios.length+1;
-        this.usuarios = [...this.usuarios, { ...usuario }];
-        Swal.fire({
-          title: "Notificación",
-          text: "Usuario agregado con éxito",
-          icon: "success"
+        // usuario.id = this.usuarios.length+1;
+        this.service.create(usuario).subscribe({
+          next: userNew => {
+          this.usuarios = [...this.usuarios, { ...userNew }];
+          this.router.navigate(['/user'], {state: {usuarios: this.usuarios}}  );
+          Swal.fire({
+            title: "Notificación",
+            text: "Usuario agregado con éxito",
+            icon: "success"
+          });
+        },
+        error:(err)=>{
+          // console.log(err.error);
+          if(err.status == 400){
+            this.sharingData.errorsUserFormEmitter.emit(err.error);
+          }
+        }
         });
       }
-      this.router.navigate(['/user'], {state: {usuarios: this.usuarios}});
+      // this.router.navigate(['/user'], {state: {usuarios: this.usuarios}});
+      // this.router.navigate(['/user']  );
     }); 
   }
   eliminar(){
     this.sharingData.idEvent.subscribe(id =>{
-      this.usuarios = this.usuarios.filter(usuario => usuario.id!=id);
-      this.router.navigate(['user/create'],{skipLocationChange:true}).then(()=>{
-        this.router.navigate(['/user'], {state:{usuarios: this.usuarios}})
+      this.service.delete(id).subscribe(() =>{
+        this.usuarios = this.usuarios.filter(usuario => usuario.id!=id);
+        this.router.navigate(['user/create'],{skipLocationChange:true}).then(()=>{
+          this.router.navigate(['/user'], {state:{usuarios: this.usuarios}})
+        });
       });
     })
   }

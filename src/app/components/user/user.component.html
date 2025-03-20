@@ -23,7 +23,7 @@
                     <td> {{item.name}} </td>
                     <td> {{item.lastname}} </td>
                     <td> {{item.email}} </td>
-                    <td> {{item.nickname}} </td>
+                    <td> {{item.username}} </td>
                     <td> {{item.password}} </td>
                     <td><button class="btn btn-sm btn-danger" (click)="eliminar(item.id)">Delete</button></td>
                     <td><button class="btn btn-sm btn-info" [routerLink]="['/user/edit', item.id]">Update</button></td>
