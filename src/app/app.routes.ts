@@ -6,10 +6,14 @@ export const routes: Routes = [
     {
         path:'',
         pathMatch:'full',
-        redirectTo: '/user',
+        redirectTo: '/user/page/0',
     },
     {
         path:'user',
+        component: UserComponent,
+    },
+    {
+        path:'user/page/:page',
         component: UserComponent,
     },
     {

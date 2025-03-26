@@ -15,6 +15,9 @@ export class UserService {
   finAll(): Observable<Usuario[]>{
     return this.http.get<Usuario[]>(this.url);
   }
+  finAllPageable(page: number): Observable<any>{
+    return this.http.get<any>(`${this.url}/page/${page}`);
+  }
   findById(id:number): Observable<Usuario>{
     return this.http.get<Usuario>(`${this.url}/${id}`);
   }

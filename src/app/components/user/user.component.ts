@@ -1,31 +1,44 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Usuario } from '../../models/usuario';
 import Swal from 'sweetalert2';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SharingDataService } from '../../services/sharing-data.service';
+import { PaginatorComponent } from '../paginator/paginator.component';
 
 @Component({
   selector: 'user',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, PaginatorComponent],
   templateUrl: './user.component.html'
 })
 export class UserComponent implements OnInit{
   usuarios: Usuario[] = [];
+  paginator: any={};
+  pageUrl: string='/user/page'
   title:string='Listado de usuarios';
   constructor(private service: UserService,
     private router:Router,
-    private sharingData: SharingDataService
+    private sharingData: SharingDataService,
+    private route:ActivatedRoute
   ){
     if(this.router.getCurrentNavigation()?.extras.state){
       this.usuarios=this.router.getCurrentNavigation()?.extras.state!['usuarios'];
+      this.paginator=this.router.getCurrentNavigation()?.extras.state!['paginator'];
     }
   }
   ngOnInit(): void {
-    if(this.usuarios == undefined || this.usuarios == null){
+    if(this.usuarios.length==0 || this.usuarios == undefined || this.usuarios == null){
       // console.log('consulta find all');
-      this.service.finAll().subscribe(usuarios=>this.usuarios = usuarios);
+      // this.service.finAll().subscribe(usuarios=>this.usuarios = usuarios);
+      this.route.paramMap.subscribe(params =>{
+        const numPage = +(params.get('page')||'0');
+        this.service.finAllPageable(numPage).subscribe(pageable => {
+          this.paginator = pageable;
+          this.usuarios = pageable.content as Usuario[];
+          this.sharingData.pageUserEmitter.emit({usuarios: this.usuarios, paginator: this.paginator})
+        });
+      });
     }
   }
   eliminar(id: number){

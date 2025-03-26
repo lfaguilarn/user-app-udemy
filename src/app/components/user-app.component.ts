@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Usuario } from '../models/usuario';
 import { UserService } from '../services/user.service';
 import Swal from 'sweetalert2';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SharingDataService } from '../services/sharing-data.service';
 import { state } from '@angular/animations';
@@ -17,18 +17,34 @@ import { state } from '@angular/animations';
 export class UserAppComponent implements OnInit {
   title:string='Listado de usuarios';
   usuarios: Usuario[]=[];
+  paginator: any={};
   constructor(
     private service:UserService,
     private sharingData: SharingDataService,
-    private router:Router
+    private router:Router,
+    private route:ActivatedRoute
   ){
   }
   ngOnInit(): void {
-    this.service.finAll().subscribe(usuarios => this.usuarios = usuarios);
+    // this.service.finAll().subscribe(usuarios => this.usuarios = usuarios);
+    // this.route.paramMap.subscribe(params =>{
+    //   const numPage = +(params.get('page')||'0');
+    //   console.log(numPage);
+    //   // this.service.finAllPageable(numPage).subscribe(pageable => this.usuarios = pageable.content as Usuario[]);
+    // });
     this.addUsuario();
     this.eliminar();
     this.buscarUsuarioPorId();
+    this.pageUserEvent();
   }
+
+  pageUserEvent(){
+    this.sharingData.pageUserEmitter.subscribe(pageable => {
+      this.usuarios = pageable.usuarios;
+      this.paginator = pageable.paginator;
+    });
+  }
+
   addUsuario(){
     this.sharingData.usuarioEmit.subscribe(usuario=>{
       if(usuario.id > 0){
@@ -36,7 +52,7 @@ export class UserAppComponent implements OnInit {
           {
             next: (userUpdated) =>{
               this.usuarios = this.usuarios.map(u => (u.id == userUpdated.id)? {... userUpdated}: u);
-              this.router.navigate(['/user'], {state: {usuarios: this.usuarios}}  );
+              this.router.navigate(['/user'], {state: {usuarios: this.usuarios, paginator: this.paginator}}  );
               Swal.fire({
                 title: "Notificación",
                 text: "Usuario modificado con éxito",
@@ -58,7 +74,7 @@ export class UserAppComponent implements OnInit {
         this.service.create(usuario).subscribe({
           next: userNew => {
           this.usuarios = [...this.usuarios, { ...userNew }];
-          this.router.navigate(['/user'], {state: {usuarios: this.usuarios}}  );
+          this.router.navigate(['/user'], {state: {usuarios: this.usuarios, paginator: this.paginator}}  );
           Swal.fire({
             title: "Notificación",
             text: "Usuario agregado con éxito",

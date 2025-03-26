@@ -10,10 +10,14 @@ export class SharingDataService {
   private _buscarUsuarioPorId = new EventEmitter();
   private _usuarioSeleccionadoEditar = new EventEmitter();
   private _errorsUserFormEmitter = new EventEmitter();
+  private _pageUserEmitter = new EventEmitter();
   constructor() { }
 
   get usuarioEmit(): EventEmitter<Usuario>{
     return this._usuarioEmit;
+  }
+  get pageUserEmitter(){
+    return this._pageUserEmitter;
   }
   get idEvent(): EventEmitter<number>{
     return this._idEvent;
