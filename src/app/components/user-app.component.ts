@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterModule, RouterOutlet } from '@angular/rou
 import { NavbarComponent } from './navbar/navbar.component';
 import { SharingDataService } from '../services/sharing-data.service';
 import { state } from '@angular/animations';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'user-app',
@@ -22,7 +23,8 @@ export class UserAppComponent implements OnInit {
     private service:UserService,
     private sharingData: SharingDataService,
     private router:Router,
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    private authService: AuthService
   ){
   }
   ngOnInit(): void {
@@ -36,6 +38,35 @@ export class UserAppComponent implements OnInit {
     this.eliminar();
     this.buscarUsuarioPorId();
     this.pageUserEvent();
+    this.handlerLogin();
+  }
+
+  handlerLogin(){
+    this.sharingData.handlerLoginEventEmitter.subscribe(({username, password})=>{
+      // console.log(username+' - '+password);
+      this.authService.loginUser({username, password}).subscribe({
+        next: response =>{
+          const token = response.token;
+          const payload = this.authService.getPayload(token);
+          const user = {username: payload.sub};
+          const login = {
+            user,
+            isAuth: true,
+            isAdmin: payload.isAdmin
+          }
+          this.authService.token = token;
+          this.authService.user = login;
+          this.router.navigate(['/users/page/0']);
+        },
+        error: error =>{
+          if(error.status == 401){
+            Swal.fire('Error en el login', 'Username o password incorrectos', 'error');
+          }else{
+            throw error;
+          }
+        }
+      })
+    })
   }
 
   pageUserEvent(){

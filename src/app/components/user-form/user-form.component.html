@@ -95,6 +95,7 @@
                     }-->
                     <!-- minlength="6" -->
                 </div>
+                @if(usuario.id<=0||usuario.id==undefined){
                 <div>
                     <input 
                     class="form-control my-2"
@@ -120,6 +121,7 @@
                     }-->
                     <!-- minlength = "8" -->
                 </div>
+            }
                 <button type="submit"
                  class="btn btn-primary m-2"
                  > 

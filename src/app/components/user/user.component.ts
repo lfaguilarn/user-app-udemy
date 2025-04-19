@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SharingDataService } from '../../services/sharing-data.service';
 import { PaginatorComponent } from '../paginator/paginator.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'user',
@@ -17,8 +18,10 @@ export class UserComponent implements OnInit{
   paginator: any={};
   pageUrl: string='/user/page'
   title:string='Listado de usuarios';
+
   constructor(private service: UserService,
     private router:Router,
+    private authService:AuthService,
     private sharingData: SharingDataService,
     private route:ActivatedRoute
   ){
@@ -70,5 +73,9 @@ export class UserComponent implements OnInit{
     // this.sharingData.userEventEmitter.emit(u);
     // this.router.navigate(['/user/edit', u.id],{state:{u}});
     this.router.navigate(['/user/edit', u.id]);
+  }
+
+  get admin(){
+    return this.authService.isAdmin();
   }
 }

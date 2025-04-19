@@ -5,12 +5,21 @@ import { Usuario } from '../models/usuario';
   providedIn: 'root'
 })
 export class SharingDataService {
+
   private _usuarioEmit:EventEmitter<Usuario>= new EventEmitter();
+  
   private _idEvent: EventEmitter<number> = new EventEmitter();
+  
   private _buscarUsuarioPorId = new EventEmitter();
+  
   private _usuarioSeleccionadoEditar = new EventEmitter();
+  
   private _errorsUserFormEmitter = new EventEmitter();
+  
   private _pageUserEmitter = new EventEmitter();
+  
+  private _handlerLoginEventEmitter = new EventEmitter();
+
   constructor() { }
 
   get usuarioEmit(): EventEmitter<Usuario>{
@@ -30,5 +39,8 @@ export class SharingDataService {
   }
   get errorsUserFormEmitter(){
       return this._errorsUserFormEmitter;
+  }
+  get handlerLoginEventEmitter(){
+      return this._handlerLoginEventEmitter;
   }
 }
