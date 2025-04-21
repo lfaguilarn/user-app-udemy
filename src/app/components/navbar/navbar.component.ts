@@ -10,8 +10,8 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent {
-  @Input() usuarios: Usuario[]=[];
-  @Input() paginator= {};
+  // @Input() usuarios: Usuario[]=[];
+  // @Input() paginator= {};
   constructor(private authservice: AuthService,
     private router:Router
   ){

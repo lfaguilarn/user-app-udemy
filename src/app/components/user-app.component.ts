@@ -7,25 +7,36 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { SharingDataService } from '../services/sharing-data.service';
 import { state } from '@angular/animations';
 import { AuthService } from '../services/auth.service';
+import { Store } from '@ngrx/store';
+import { add, find, findAll, remove, setPaginator, update } from '../store/user.action';
 
 @Component({
   selector: 'user-app',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, RouterModule],
+  imports: [RouterOutlet, NavbarComponent],
   templateUrl: './user-app.component.html',
   styleUrls: ['./user-app.component.css']
 })
 export class UserAppComponent implements OnInit {
   title:string='Listado de usuarios';
-  usuarios: Usuario[]=[];
-  paginator: any={};
+  // usuarios: Usuario[]=[];
+  // paginator: any={};
+  // usuario!: Usuario;
+
+
   constructor(
+    private store: Store<{usuarios: any}>,
     private service:UserService,
     private sharingData: SharingDataService,
     private router:Router,
     private route:ActivatedRoute,
     private authService: AuthService
   ){
+    /* this.store.select('usuarios').subscribe(state =>{
+      // this.usuarios = state.usuarios;
+      // this.paginator = state.paginator;
+      this.usuario = {... state.usuario};
+    }) */
   }
   ngOnInit(): void {
     // this.service.finAll().subscribe(usuarios => this.usuarios = usuarios);
@@ -34,11 +45,12 @@ export class UserAppComponent implements OnInit {
     //   console.log(numPage);
     //   // this.service.finAllPageable(numPage).subscribe(pageable => this.usuarios = pageable.content as Usuario[]);
     // });
-    this.addUsuario();
-    this.eliminar();
-    this.buscarUsuarioPorId();
-    this.pageUserEvent();
+    // this.addUsuario();
+    // this.eliminar();
+    // this.buscarUsuarioPorId();
+    // this.pageUserEvent();
     this.handlerLogin();
+
   }
 
   handlerLogin(){
@@ -56,7 +68,7 @@ export class UserAppComponent implements OnInit {
           }
           this.authService.token = token;
           this.authService.user = login;
-          this.router.navigate(['/users/page/0']);
+          this.router.navigate(['/user/page/0']);
         },
         error: error =>{
           if(error.status == 401){
@@ -69,21 +81,28 @@ export class UserAppComponent implements OnInit {
     })
   }
 
-  pageUserEvent(){
+    //se reemplaza porque ya esta en los effects
+  /* pageUserEvent(){
     this.sharingData.pageUserEmitter.subscribe(pageable => {
-      this.usuarios = pageable.usuarios;
-      this.paginator = pageable.paginator;
+      // this.usuarios = pageable.usuarios;
+      // this.paginator = pageable.paginator;
+      this.store.dispatch(findAll( {usuarios: pageable.usuarios} ));
+      this.store.dispatch(setPaginator({ paginator: pageable.paginator }))
     });
-  }
+  } */
 
-  addUsuario(){
+  //se reemplaza porque ya esta en los effects
+  /* addUsuario(){
     this.sharingData.usuarioEmit.subscribe(usuario=>{
       if(usuario.id > 0){
         this.service.update(usuario).subscribe(
           {
             next: (userUpdated) =>{
-              this.usuarios = this.usuarios.map(u => (u.id == userUpdated.id)? {... userUpdated}: u);
-              this.router.navigate(['/user'], {state: {usuarios: this.usuarios, paginator: this.paginator}}  );
+              // this.usuarios = this.usuarios.map(u => (u.id == userUpdated.id)? {... userUpdated}: u);
+              this.store.dispatch(update({userUpdated}));
+              this.router.navigate(['/user']
+                // , {state: {usuarios: this.usuarios, paginator: this.paginator}}  
+              );
               Swal.fire({
                 title: "Notificación",
                 text: "Usuario modificado con éxito",
@@ -104,8 +123,11 @@ export class UserAppComponent implements OnInit {
         // usuario.id = this.usuarios.length+1;
         this.service.create(usuario).subscribe({
           next: userNew => {
-          this.usuarios = [...this.usuarios, { ...userNew }];
-          this.router.navigate(['/user'], {state: {usuarios: this.usuarios, paginator: this.paginator}}  );
+          // this.usuarios = [...this.usuarios, { ...userNew }];
+          this.store.dispatch(add({userNew}));
+          this.router.navigate(['/user']
+            // , {state: {usuarios: this.usuarios, paginator: this.paginator}}
+          );
           Swal.fire({
             title: "Notificación",
             text: "Usuario agregado con éxito",
@@ -123,21 +145,26 @@ export class UserAppComponent implements OnInit {
       // this.router.navigate(['/user'], {state: {usuarios: this.usuarios}});
       // this.router.navigate(['/user']  );
     }); 
-  }
-  eliminar(){
+  } */
+  /* eliminar(){
     this.sharingData.idEvent.subscribe(id =>{
       this.service.delete(id).subscribe(() =>{
-        this.usuarios = this.usuarios.filter(usuario => usuario.id!=id);
+        // this.usuarios = this.usuarios.filter(usuario => usuario.id!=id);
+        this.store.dispatch(remove({id}));
         this.router.navigate(['user/create'],{skipLocationChange:true}).then(()=>{
-          this.router.navigate(['/user'], {state:{usuarios: this.usuarios}})
+          this.router.navigate(['/user']
+            // , {state:{usuarios: this.usuarios}}
+          )
         });
       });
     })
-  }
-  buscarUsuarioPorId(){
+  } */
+  //se reemplaza porque ya esta en los effects
+  /* buscarUsuarioPorId(){
     this.sharingData.buscarUsuarioPorId.subscribe(id =>{
-      const usuario = this.usuarios.find(usuario => usuario.id == id);
-      this.sharingData.usuarioSeleccionadoEditar.emit(usuario);
+      this.store.dispatch(find({id}));
+      // const usuario = this.usuarios.find(usuario => usuario.id == id);
+      this.sharingData.usuarioSeleccionadoEditar.emit(this.usuario);
     })
-  }
+  } */
 }

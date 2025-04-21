@@ -4,9 +4,16 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { tokenInterceptor } from './interceptors/token.interceptor';
+import { provideStore } from '@ngrx/store';
+import { usersReducer } from './store/user.reducer';
+import { provideEffects } from '@ngrx/effects';
+import { UsersEffects } from './store/user.effects';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), 
-    provideRouter(routes), 
-    provideHttpClient(withInterceptors([tokenInterceptor]))]
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideHttpClient(withInterceptors([tokenInterceptor])),
+    provideStore({
+        usuarios: usersReducer
+    }), provideEffects(UsersEffects)]
 };

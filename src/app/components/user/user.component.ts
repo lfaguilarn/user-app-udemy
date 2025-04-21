@@ -6,6 +6,8 @@ import { UserService } from '../../services/user.service';
 import { SharingDataService } from '../../services/sharing-data.service';
 import { PaginatorComponent } from '../paginator/paginator.component';
 import { AuthService } from '../../services/auth.service';
+import { Store } from '@ngrx/store';
+import { load, remove } from '../../store/user.action';
 
 @Component({
   selector: 'user',
@@ -23,26 +25,32 @@ export class UserComponent implements OnInit{
     private router:Router,
     private authService:AuthService,
     private sharingData: SharingDataService,
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    private store:Store<{usuarios:any}>
   ){
-    if(this.router.getCurrentNavigation()?.extras.state){
-      this.usuarios=this.router.getCurrentNavigation()?.extras.state!['usuarios'];
-      this.paginator=this.router.getCurrentNavigation()?.extras.state!['paginator'];
-    }
+    this.store.select('usuarios').subscribe(state =>{
+      this.usuarios = state.usuarios;
+      this.paginator = state.paginator;
+    })
+    // if(this.router.getCurrentNavigation()?.extras.state){
+    //   this.usuarios=this.router.getCurrentNavigation()?.extras.state!['usuarios'];
+    //   this.paginator=this.router.getCurrentNavigation()?.extras.state!['paginator'];
+    // }
   }
   ngOnInit(): void {
-    if(this.usuarios.length==0 || this.usuarios == undefined || this.usuarios == null){
+    // if(this.usuarios.length==0 || this.usuarios == undefined || this.usuarios == null){
       // console.log('consulta find all');
       // this.service.finAll().subscribe(usuarios=>this.usuarios = usuarios);
       this.route.paramMap.subscribe(params =>{
-        const numPage = +(params.get('page')||'0');
-        this.service.finAllPageable(numPage).subscribe(pageable => {
-          this.paginator = pageable;
-          this.usuarios = pageable.content as Usuario[];
-          this.sharingData.pageUserEmitter.emit({usuarios: this.usuarios, paginator: this.paginator})
-        });
+        // const page = +(params.get('page')||'0');
+        this.store.dispatch(load({page : +(params.get('page')||'0')}));
+        // this.service.findAllPageable(numPage).subscribe(pageable => {
+        //   this.paginator = pageable;
+        //   this.usuarios = pageable.content as Usuario[];
+        //   this.sharingData.pageUserEmitter.emit({usuarios: this.usuarios, paginator: this.paginator})
+        // });
       });
-    }
+    // }
   }
   eliminar(id: number){
     Swal.fire({
@@ -56,12 +64,12 @@ export class UserComponent implements OnInit{
       cancelButtonText: "No, no lo elimines",
     }).then((result) => {
       if (result.isConfirmed) {
-        this.sharingData.idEvent.emit(id);
-        Swal.fire({
-          title: "Eliminado",
-          text: "Usario eliminado con exito",
-          icon: "success"
-        });
+        // this.sharingData.idEvent.emit(id);
+        // this.service.delete(id).subscribe(() =>{
+          // this.usuarios = this.usuarios.filter(usuario => usuario.id!=id);
+          this.store.dispatch(remove({id}));
+          
+        // });
       }
     });
     // const confir = confirm('Esta seguro de eliminar?');

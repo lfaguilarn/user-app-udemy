@@ -15,7 +15,7 @@ export class UserService {
   finAll(): Observable<Usuario[]>{
     return this.http.get<Usuario[]>(this.url);
   }
-  finAllPageable(page: number): Observable<any>{
+  findAllPageable(page: number): Observable<any>{
     return this.http.get<any>(`${this.url}/page/${page}`);
   }
   findById(id:number): Observable<Usuario>{
@@ -27,7 +27,9 @@ export class UserService {
   create(user: Usuario):Observable<Usuario>{
     return this.http.post<Usuario>(this.url, user);
   }
-  delete(id: number):Observable<void>{
-    return this.http.delete<void>(`${this.url}/${id}`);
+  delete(id: number):Observable<number>{
+    return this.http.delete<number>(`${this.url}/${id}`).pipe(
+      map(()=>id)
+    )
   }
 }
