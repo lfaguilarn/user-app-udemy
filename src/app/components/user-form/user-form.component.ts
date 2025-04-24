@@ -6,7 +6,7 @@ import { SharingDataService } from '../../services/sharing-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { Store } from '@ngrx/store';
-import { add, find, resetUser, update } from '../../store/user.action';
+import { add, find, resetUser, update } from '../../store/users/user.action';
 
 @Component({
   selector: 'user-form',

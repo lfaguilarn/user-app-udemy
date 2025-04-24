@@ -32,7 +32,7 @@
             <a class="btn btn-outline-primary"
             [routerLink]="['/login']">Login</a>
           }@else {
-            {{ login.user.username }}
+            {{ login.user?.username}}
             <button
             (click)="handlerLogout()"
             class="btn btn-outline-success">Logout</button>

@@ -8,7 +8,8 @@ import { SharingDataService } from '../services/sharing-data.service';
 import { state } from '@angular/animations';
 import { AuthService } from '../services/auth.service';
 import { Store } from '@ngrx/store';
-import { add, find, findAll, remove, setPaginator, update } from '../store/user.action';
+import { login } from '../store/auth/auth.action';
+// import { add, find, findAll, remove, setPaginator, update } from '../store/user.action';
 
 @Component({
   selector: 'user-app',
@@ -17,28 +18,31 @@ import { add, find, findAll, remove, setPaginator, update } from '../store/user.
   templateUrl: './user-app.component.html',
   styleUrls: ['./user-app.component.css']
 })
-export class UserAppComponent implements OnInit {
-  title:string='Listado de usuarios';
+export class UserAppComponent 
+// implements OnInit 
+{
+  // title:string='Listado de usuarios';
   // usuarios: Usuario[]=[];
   // paginator: any={};
   // usuario!: Usuario;
 
 
-  constructor(
-    private store: Store<{usuarios: any}>,
-    private service:UserService,
-    private sharingData: SharingDataService,
-    private router:Router,
-    private route:ActivatedRoute,
-    private authService: AuthService
-  ){
+  // constructor(
+    // private store: Store<{usuarios: any}>,
+  //   private store: Store<{auth: any}>,
+  //   private service:UserService,
+  //   private sharingData: SharingDataService,
+  //   private router:Router,
+  //   private route:ActivatedRoute,
+  //   private authService: AuthService
+  // ){
     /* this.store.select('usuarios').subscribe(state =>{
       // this.usuarios = state.usuarios;
       // this.paginator = state.paginator;
       this.usuario = {... state.usuario};
     }) */
-  }
-  ngOnInit(): void {
+  // }
+  // ngOnInit(): void {
     // this.service.finAll().subscribe(usuarios => this.usuarios = usuarios);
     // this.route.paramMap.subscribe(params =>{
     //   const numPage = +(params.get('page')||'0');
@@ -49,37 +53,43 @@ export class UserAppComponent implements OnInit {
     // this.eliminar();
     // this.buscarUsuarioPorId();
     // this.pageUserEvent();
-    this.handlerLogin();
+  //   this.handlerLogin();
 
-  }
+  // }
 
-  handlerLogin(){
-    this.sharingData.handlerLoginEventEmitter.subscribe(({username, password})=>{
-      // console.log(username+' - '+password);
-      this.authService.loginUser({username, password}).subscribe({
-        next: response =>{
-          const token = response.token;
-          const payload = this.authService.getPayload(token);
-          const user = {username: payload.sub};
-          const login = {
-            user,
-            isAuth: true,
-            isAdmin: payload.isAdmin
-          }
-          this.authService.token = token;
-          this.authService.user = login;
-          this.router.navigate(['/user/page/0']);
-        },
-        error: error =>{
-          if(error.status == 401){
-            Swal.fire('Error en el login', 'Username o password incorrectos', 'error');
-          }else{
-            throw error;
-          }
-        }
-      })
-    })
-  }
+  // handlerLogin(){
+    // this.sharingData.handlerLoginEventEmitter.subscribe(({username, password})=>{
+    //   // console.log(username+' - '+password);
+    //   this.authService.loginUser({username, password}).subscribe({
+    //     next: response =>{
+    //       const token = response.token;
+    //       const payload = this.authService.getPayload(token);
+    //       // const user = {username: payload.sub};
+    //       /* const loginData = {
+    //         user,
+    //         isAuth: true,
+    //         isAdmin: payload.isAdmin
+    //       } */
+    //       // this.store.dispatch(login({login:loginData}));
+
+    //       this.authService.token = token;
+    //       this.authService.user = {
+    //         usuario:{username: payload.sub},
+    //         isAuth: true,
+    //         isAdmin: payload.isAdmin
+    //       };
+    //       this.router.navigate(['/user']);
+    //     },
+    //     error: error =>{
+    //       if(error.status == 401){
+    //         Swal.fire('Error en el login', 'Username o password incorrectos', 'error');
+    //       }else{
+    //         throw error;
+    //       }
+    //     }
+    //   })
+    // })
+  // }
 
     //se reemplaza porque ya esta en los effects
   /* pageUserEvent(){
