@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Usuario } from '../models/usuario';
 import { map, Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { BACKEND_URL } from '../config/config';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,8 @@ import { HttpClient } from '@angular/common/http';
 export class UserService {
 
   private usuarios: Usuario[]=[];
-  private url: string = 'http://localhost:8080/api/users';
+  // private url: string = 'http://localhost:8080/api/users';
+  private url: string = `${BACKEND_URL}/api/users`;
   constructor(private http: HttpClient) { }
 
   finAll(): Observable<Usuario[]>{

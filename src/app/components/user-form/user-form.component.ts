@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { Store } from '@ngrx/store';
 import { add, find, resetUser, update } from '../../store/users/user.action';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'user-form',
@@ -64,9 +65,12 @@ export class UserFormComponent implements OnInit {
       // userForm.resetForm();
     }
     limpiar(userForm: NgForm): void{
-    this.store.dispatch(resetUser());
+      if(this.usuario.id==0||this.usuario.id == undefined){
+        this.store.dispatch(resetUser());
+      }
     // this.usuario = new Usuario();
     userForm.reset();
     userForm.resetForm();
   }
+
 }

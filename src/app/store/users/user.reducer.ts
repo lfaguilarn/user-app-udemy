@@ -9,7 +9,8 @@ export const usersReducer = createReducer(
     usuarios,
     paginator:{},
     usuario,
-    errors:{}
+    errors:{},
+    cargando: true,
     },
     /* on(load, (state, {page})=>({
         usuarios:[...usuarios],
@@ -21,7 +22,8 @@ export const usersReducer = createReducer(
             usuarios:[...usuarios],
             paginator: state.paginator,
             usuario: state.usuario,
-            errors: state.errors
+            errors: state.errors,
+            cargando: false
         }
     }),
     on(findAllPageable, (state, {usuarios, paginator})=>{
@@ -29,50 +31,58 @@ export const usersReducer = createReducer(
             usuarios:[...usuarios],
             paginator: {...paginator},
             usuario: state.usuario,
-            errors: state.errors
+            errors: state.errors,
+            cargando: false
         }
     }),
     on(find, (state, {id}) => ({
         usuarios: state.usuarios,
         paginator: state.paginator,
         usuario: state.usuarios.find(user => user.id == id) || new Usuario(),
-        errors: state.errors
+        errors: state.errors,
+        cargando: state.cargando
     })),
     on(setPaginator, (state, {paginator})=>({
         usuarios: state.usuarios,
         paginator: {...paginator},
         usuario: state.usuario,
-        errors: state.errors
+        errors: state.errors,
+        cargando: state.cargando
     })),
     on(addSuccess, (state, {userNew})=>({
         usuarios:[...state.usuarios, { ...userNew }],
         paginator: state.paginator,
         usuario: {... usuario},
-        errors: {}
+        errors: {},
+        cargando: state.cargando
     })),
     on(updateSuccess, (state, {userUpdated})=>({
         usuarios: state.usuarios.map(u => (u.id == userUpdated.id)? {... userUpdated}: u),
         paginator: state.paginator,
         usuario: {... usuario},
-        errors: {}
+        errors: {},
+        cargando: state.cargando
     })),
     on(removeSuccess, (state, {id})=>({
         usuarios: state.usuarios.filter(usuario => usuario.id!=id),
         paginator: state.paginator,
         usuario: state.usuario,
-        errors: state.errors
+        errors: state.errors,
+        cargando: state.cargando
     })),
     on(setErrors, (state, {userForm, errors})=>({
         usuarios: state.usuarios,
         paginator: state.paginator,
         usuario: {... userForm},
-        errors: {... errors}
+        errors: {... errors},
+        cargando: state.cargando
     })),
     on(resetUser, (state)=>({
         usuarios: state.usuarios,
         paginator: state.paginator,
         usuario: {... usuario},
-        errors: {}
+        errors: {},
+        cargando: state.cargando
     })),
     
 

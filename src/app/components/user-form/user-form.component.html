@@ -102,8 +102,6 @@
                     placeholder="Contraseña"
                     name="password"
                     [(ngModel)]="usuario.password"
-                    
-                    
                     #password="ngModel"
                     >
                     <!-- validacion por medio del back -->
@@ -122,6 +120,14 @@
                     <!-- minlength = "8" -->
                 </div>
             }
+                <div class="form-check my-2">
+                    <input type="checkbox"
+                    [(ngModel)]="usuario.admin"
+                    name="admin"
+                    checked
+                    class="form-check-input">
+                    <label class="form-check-label">Admin</label>
+                </div>
                 <button type="submit"
                  class="btn btn-primary m-2"
                  > 

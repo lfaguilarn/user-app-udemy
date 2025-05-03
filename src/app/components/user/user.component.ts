@@ -20,7 +20,7 @@ export class UserComponent implements OnInit{
   paginator: any={};
   pageUrl: string='/user/page'
   title:string='Listado de usuarios';
-
+  isLoad: boolean = true;
   constructor(private service: UserService,
     private router:Router,
     private authService:AuthService,
@@ -31,6 +31,7 @@ export class UserComponent implements OnInit{
     this.store.select('usuarios').subscribe(state =>{
       this.usuarios = state.usuarios;
       this.paginator = state.paginator;
+      this.isLoad = state.cargando;
     })
     // if(this.router.getCurrentNavigation()?.extras.state){
     //   this.usuarios=this.router.getCurrentNavigation()?.extras.state!['usuarios'];
